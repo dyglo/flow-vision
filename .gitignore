@@ -1,0 +1,35 @@
+# Node
+node_modules/
+dist/
+.vite/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Environment files
+.env
+frontend/.env
+backend/.env
+
+# Data / Models / Uploads
+backend/data/*.db
+backend/data/*.sqlite
+backend/models/
+backend/uploads/
+
+# IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+      - ./backend/data:/app/backend/data
+    env_file:
+      - .env
+    ports:
+      - '8000:8000'
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    env_file:
+      - ./frontend/.env
+    ports:
+      - '5173:5173'
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - '6379:6379'
+    restart: unless-stopped
