@@ -26,7 +26,7 @@ const heroChips = [
 type Tab = (typeof tabs)[number]
 
 function App() {
-  const [activeTab, setActiveTab] = useState<Tab['id']>('video')
+  const [activeTab, setActiveTab] = useState<Tab['id']>('single')
 
   const ActivePage = useMemo(() => {
     const current = tabs.find((tab) => tab.id === activeTab)

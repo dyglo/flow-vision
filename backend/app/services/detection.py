@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Iterable
+import math
+from typing import Iterable, Sequence
 
 import numpy as np
 
@@ -12,7 +13,13 @@ except ImportError:  # pragma: no cover
     logger = logging.getLogger("visionflow")
 
 from app.models.detection import DetectionResultDocument
-from app.schemas.detection import DetectionResponse
+from app.schemas.detection import (
+    ClassFrequencyItem,
+    ClassFrequencyResponse,
+    DetectionHistoryItem,
+    DetectionHistoryResponse,
+    DetectionResponse,
+)
 from app.services.yolo import YOLOService
 
 
@@ -33,6 +40,59 @@ class DetectionRepository:
         )
         await document.insert()
         return document
+
+    async def fetch_history(
+        self,
+        *,
+        page: int,
+        page_size: int,
+        class_name: str | None = None,
+    ) -> tuple[list[DetectionResultDocument], int]:
+        query: dict[str, object] = {}
+        if class_name:
+            query["payload.detections.class_name"] = class_name
+
+        total = await DetectionResultDocument.find(query).count()
+        offset = (page - 1) * page_size
+        documents = (
+            await DetectionResultDocument.find(query)
+            .sort(-DetectionResultDocument.created_at)
+            .skip(offset)
+            .limit(page_size)
+            .to_list()
+        )
+        return documents, total
+
+    async def class_frequency(
+        self,
+        *,
+        class_names: Sequence[str] | None = None,
+    ) -> dict[str, object]:
+        collection = DetectionResultDocument.get_motor_collection()
+        pipeline: list[dict[str, object]] = [{"$unwind": "$payload.detections"}]
+        if class_names:
+            pipeline.append({"$match": {"payload.detections.class_name": {"$in": list(set(class_names))}}})
+        pipeline.extend(
+            [
+                {
+                    "$group": {
+                        "_id": "$payload.detections.class_name",
+                        "detections": {"$sum": 1},
+                        "last_seen": {"$max": "$created_at"},
+                    }
+                },
+                {"$sort": {"detections": -1}},
+            ]
+        )
+
+        aggregated = await collection.aggregate(pipeline).to_list(None)
+        total_detections = sum(item["detections"] for item in aggregated)
+        total_classes = len(aggregated)
+        return {
+            "items": aggregated,
+            "total_detections": total_detections,
+            "total_classes": total_classes,
+        }
 
 
 class DetectionService:
@@ -55,6 +115,54 @@ class DetectionService:
         response = self._yolo.predict_image(image, selected_classes)
         await self._repository.persist(response, source_name=source_name)
         return response
+
+    async def list_detection_history(
+        self,
+        *,
+        page: int,
+        page_size: int,
+        class_name: str | None = None,
+    ) -> DetectionHistoryResponse:
+        documents, total = await self._repository.fetch_history(page=page, page_size=page_size, class_name=class_name)
+        pages = math.ceil(total / page_size) if page_size else 0
+        items = [
+            DetectionHistoryItem(
+                id=str(document.id),
+                source_name=document.source_name,
+                source_type=document.source_type,
+                metadata=document.metadata,
+                summary=document.summary,
+                created_at=document.created_at,
+            )
+            for document in documents
+        ]
+        return DetectionHistoryResponse(page=page, page_size=page_size, total=total, pages=pages, items=items)
+
+    async def class_frequency(
+        self,
+        *,
+        class_names: Sequence[str] | None = None,
+        limit: int | None = 50,
+    ) -> ClassFrequencyResponse:
+        filtered_class_names = [name for name in class_names or [] if name]
+        aggregation = await self._repository.class_frequency(class_names=filtered_class_names or None)
+        aggregated_items: list[dict[str, object]] = aggregation["items"]  # type: ignore[assignment]
+        items = [
+            ClassFrequencyItem(
+                class_name=str(item["_id"]),
+                detections=int(item["detections"]),
+                last_seen=item.get("last_seen"),
+            )
+            for item in aggregated_items
+        ]
+        if limit is not None:
+            items = items[:limit]
+
+        return ClassFrequencyResponse(
+            total_detections=int(aggregation["total_detections"]),  # type: ignore[arg-type]
+            total_classes=int(aggregation["total_classes"]),  # type: ignore[arg-type]
+            items=items,
+        )
 
 
 _yolo_service: YOLOService | None = None

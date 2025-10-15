@@ -52,3 +52,32 @@ class DetectionResponse(BaseModel):
     metadata: DetectionMetadata
     summary: DetectionSummary
     payload: DetectionResponsePayload
+
+
+class DetectionHistoryItem(BaseModel):
+    id: str
+    source_name: str | None
+    source_type: str
+    metadata: DetectionMetadata
+    summary: DetectionSummary
+    created_at: datetime
+
+
+class DetectionHistoryResponse(BaseModel):
+    page: int
+    page_size: int
+    total: int
+    pages: int
+    items: List[DetectionHistoryItem]
+
+
+class ClassFrequencyItem(BaseModel):
+    class_name: str
+    detections: int
+    last_seen: datetime | None = None
+
+
+class ClassFrequencyResponse(BaseModel):
+    total_detections: int
+    total_classes: int
+    items: List[ClassFrequencyItem]

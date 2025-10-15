@@ -12,7 +12,7 @@ single-image detection with class filtering.
 - `backend/`: FastAPI application with CORS, environment-driven configuration, SQLite (for auxiliary
   metadata), MongoDB + Beanie setup, and YOLO service modules.
 - `docker-compose.yml`: Spins up frontend, backend, Redis (for future task queues), and MongoDB.
-- `.env.example`: Shared configuration template — copy to `.env` / `frontend/.env` before running.
+- `.env.example`: Shared configuration template—copy to `.env` / `frontend/.env` before running.
 
 ## Getting Started
 
@@ -39,11 +39,16 @@ cd frontend && cp .env.example .env && cd ..
 docker compose up --build
 ```
 
+> **Important**  
+> Before starting the stack, edit your local `.env` (and deployment secrets) to set  
+> `MONGO_URL=mongodb+srv://tafardev_db_user:TQAAZNvLacy0GUOv@flowvision.yfaqlyl.mongodb.net/?retryWrites=true&w=majority&appName=flowvision`.  
+> Keep this out of version control by updating only local environment files or secret stores.
+
 ### Environment Configuration
 
 | Variable | Description |
 | --- | --- |
-| `MONGO_URL` | Defaults to `mongodb://mongo:27017`. Override with the managed cluster connection string `mongodb+srv://tafardev_db_user:TQAAZNvLacy0GUOv@flowvision.yfaqlyl.mongodb.net/?retryWrites=true&w=majority&appName=flowvision` when targeting Atlas. |
+| `MONGO_URL` | Defaults to `mongodb://mongo:27017`. Override with the Atlas URI above for production. |
 | `MONGO_DB_NAME` | Mongo database name; defaults to `visionflow`. |
 | `YOLO_MODEL_PATH` | Path to YOLO weights, default `yolo11n.pt`. Place custom weights under `backend/models`. |
 | `YOLO_CONFIDENCE` | Confidence threshold for detections (0-1). |

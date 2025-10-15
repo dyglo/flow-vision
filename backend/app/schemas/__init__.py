@@ -1,5 +1,9 @@
 from app.schemas.detection import (
     BoundingBox,
+    ClassFrequencyItem,
+    ClassFrequencyResponse,
+    DetectionHistoryItem,
+    DetectionHistoryResponse,
     DetectionItem,
     DetectionMetadata,
     DetectionResponse,
@@ -9,6 +13,10 @@ from app.schemas.detection import (
 
 __all__ = [
     "BoundingBox",
+    "ClassFrequencyItem",
+    "ClassFrequencyResponse",
+    "DetectionHistoryItem",
+    "DetectionHistoryResponse",
     "DetectionItem",
     "DetectionMetadata",
     "DetectionResponse",

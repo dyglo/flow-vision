@@ -552,19 +552,19 @@ GET    /api/info                         # API info & version
 - [x] **Test class filtering with various combinations**
 
 ### Phase 3: Single Image Detection (Week 3)
-- [ ] Build image upload component
-- [ ] Implement drag & drop functionality
-- [ ] **Create class selector component (multi-select)**
-- [ ] **Add search/filter functionality for classes**
-- [ ] **Implement "Select All" / "Deselect All" buttons**
-- [ ] Create detection results display
-- [ ] Visualize bounding boxes (color-coded by class)
-- [ ] Show detection metrics
-- [ ] **Display selected vs detected classes comparison**
-- [ ] Add download functionality
-- [ ] Implement loading states and error handling
-- [ ] Add animations with Framer Motion
-- [ ] **Persist class selections to local storage**
+- [x] Build image upload component
+- [x] Implement drag & drop functionality
+- [x] **Create class selector component (multi-select)**
+- [x] **Add search/filter functionality for classes**
+- [x] **Implement "Select All" / "Deselect All" buttons**
+- [x] Create detection results display
+- [x] Visualize bounding boxes (color-coded by class)
+- [x] Show detection metrics
+- [x] **Display selected vs detected classes comparison**
+- [x] Add download functionality
+- [x] Implement loading states and error handling
+- [x] Add animations with Framer Motion
+- [x] **Persist class selections to local storage**
 
 ### Phase 4: Batch Processing (Week 4)
 - [ ] Set up Celery + Redis
