@@ -14,6 +14,7 @@ services:
       - '8000:8000'
     depends_on:
       - redis
+      - mongo
     restart: unless-stopped
 
   frontend:
@@ -37,3 +38,14 @@ services:
     ports:
       - '6379:6379'
     restart: unless-stopped
+
+  mongo:
+    image: mongo:7.0
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongo-data:

@@ -18,12 +18,19 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./backend/data/visionflow.db"
     sqlite_echo: bool = False
 
+    mongo_url: str = "mongodb://mongo:27017"
+    mongo_db_name: str = "visionflow"
+
     redis_url: str = "redis://localhost:6379/0"
     celery_broker_url: str | None = None
     celery_result_backend: str | None = None
 
     models_dir: Path = Path("./backend/models")
     uploads_dir: Path = Path("./backend/uploads")
+
+    yolo_model_path: str = "yolo11n.pt"
+    yolo_confidence: float = 0.25
+    yolo_device: str = "cpu"
 
     log_level: str = "INFO"
 
@@ -36,6 +43,14 @@ class Settings(BaseSettings):
     @property
     def cors_origins(self) -> List[str]:
         return list(self.backend_cors_origins)
+
+    @property
+    def celery_broker(self) -> str:
+        return self.celery_broker_url or self.redis_url
+
+    @property
+    def celery_backend(self) -> str:
+        return self.celery_result_backend or self.redis_url
 
 
 @lru_cache

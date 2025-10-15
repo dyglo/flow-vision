@@ -538,18 +538,18 @@ GET    /api/info                         # API info & version
 - [x] Create basic project structure
 
 ### Phase 2: Core Backend Services (Week 2)
-- [ ] Implement YOLO service wrapper
-- [ ] **Implement class filtering logic in YOLO service**
-- [ ] Create image processing utilities
-- [ ] Implement single image detection endpoint
-- [ ] **Add class selection parameter handling**
-- [ ] Set up file upload handling
-- [ ] Implement result serialization
-- [ ] Add error handling and logging
-- [ ] Create MongoDB connection and Beanie models
-- [ ] **Create indexes for efficient class-based queries**
-- [ ] Write unit tests for core services
-- [ ] **Test class filtering with various combinations**
+- [x] Implement YOLO service wrapper
+- [x] **Implement class filtering logic in YOLO service**
+- [x] Create image processing utilities
+- [x] Implement single image detection endpoint
+- [x] **Add class selection parameter handling**
+- [x] Set up file upload handling
+- [x] Implement result serialization
+- [x] Add error handling and logging
+- [x] Create MongoDB connection and Beanie models
+- [x] **Create indexes for efficient class-based queries**
+- [x] Write unit tests for core services
+- [x] **Test class filtering with various combinations**
 
 ### Phase 3: Single Image Detection (Week 3)
 - [ ] Build image upload component

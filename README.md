@@ -1,17 +1,18 @@
 # VisionFlow
 
-Monorepo scaffold for the VisionFlow platform. Phase 1 establishes the full-stack foundations (React
-+ FastAPI), containerised tooling, and environment configuration to support subsequent feature
-phases.
+VisionFlow is an AI-assisted object detection platform. The repository is organised as a monorepo
+with a Vite + React frontend and a FastAPI backend. Phase 1 established the core scaffolding; Phase 2
+introduces the YOLO inference service, MongoDB persistence via Beanie, and an HTTP endpoint for
+single-image detection with class filtering.
 
 ## Structure
 
-- `frontend/`: React + Vite + Tailwind UI shell with navigation stubs for all roadmap phases.
-- `backend/`: FastAPI service with env-driven configuration, CORS, SQLite (dev) session factory, and
-  Docker-ready packaging.
-- `docker-compose.yml`: Spins up frontend, backend, and Redis for local orchestration (forward-looking
-  for batch processing).
-- `.env.example`: Shared configuration template. Copy to `.env` / `frontend/.env` before running.
+- `frontend/`: React UI shell with navigation stubs matching the design comps. TailwindCSS and Vite
+  configuration include shared aliases and theming primitives.
+- `backend/`: FastAPI application with CORS, environment-driven configuration, SQLite (for auxiliary
+  metadata), MongoDB + Beanie setup, and YOLO service modules.
+- `docker-compose.yml`: Spins up frontend, backend, Redis (for future task queues), and MongoDB.
+- `.env.example`: Shared configuration template — copy to `.env` / `frontend/.env` before running.
 
 ## Getting Started
 
@@ -38,7 +39,25 @@ cd frontend && cp .env.example .env && cd ..
 docker compose up --build
 ```
 
-## Next Steps
+### Environment Configuration
 
-- Phase 2: Implement YOLO service wrapper, detection endpoints, and persistence.
-- Phase 3+: Flesh out the UI components per the provided design system.
+| Variable | Description |
+| --- | --- |
+| `MONGO_URL` | Defaults to `mongodb://mongo:27017`. Override with the managed cluster connection string `mongodb+srv://tafardev_db_user:TQAAZNvLacy0GUOv@flowvision.yfaqlyl.mongodb.net/?retryWrites=true&w=majority&appName=flowvision` when targeting Atlas. |
+| `MONGO_DB_NAME` | Mongo database name; defaults to `visionflow`. |
+| `YOLO_MODEL_PATH` | Path to YOLO weights, default `yolo11n.pt`. Place custom weights under `backend/models`. |
+| `YOLO_CONFIDENCE` | Confidence threshold for detections (0-1). |
+| `YOLO_DEVICE` | `cpu` or CUDA device (e.g. `cuda:0`). |
+
+## Testing
+
+```bash
+cd backend
+pytest
+```
+
+## Current Focus
+
+- Phase 2 backend: YOLO service wrapper with class filtering, detection endpoint, and MongoDB
+  persistence.
+- Next (Phase 3): Frontend single-image workflow consuming the new API.
